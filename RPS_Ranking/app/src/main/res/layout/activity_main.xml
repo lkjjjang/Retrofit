@@ -37,12 +37,20 @@
                 android:text="1위 : "/>
 
             <TextView
+                android:id="@+id/tv_1st"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="30sp"
-                android:text="1위아이디 "/>
+                android:text="1위아이디"/>
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:text=" "/>
+
+            <TextView
+                android:id="@+id/tv_1st_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="30sp"
@@ -136,7 +144,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="30sp"
-            android:text="1"/>
+            android:text="0"/>
 
     </LinearLayout>
 
@@ -182,15 +190,28 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center">
 
             <ImageView
                 android:id="@+id/iv_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/three"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/one"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_start"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/iv_start"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/start"/>
 
         </LinearLayout>
 

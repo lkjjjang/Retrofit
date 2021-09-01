@@ -4,13 +4,17 @@ import java.io.Serializable;
 
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
-    private String id;
-    private String password;
-    private String email;
 
-    public User(String id, String password, String email) {
+    private final String id;
+    private final String password;
+    private final String email;
+    private int bestScore;
+    private int score;
+
+    public User(String id, String password, int bestScore, String email) {
         this.id = id;
         this.password = password;
+        this.bestScore = bestScore;
         this.email = email;
     }
 
@@ -24,5 +28,21 @@ public class User implements Serializable {
 
     public String getEmail() {
         return email;
+    }
+
+    public int getScore() {
+        return this.score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public int getBestScore() {
+        return this.bestScore;
+    }
+
+    public void getBestScore(int score) {
+        this.bestScore = score;
     }
 }

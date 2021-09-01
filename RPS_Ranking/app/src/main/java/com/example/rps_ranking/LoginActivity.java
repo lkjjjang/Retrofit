@@ -80,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                 Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                User user = new User(id, pass, "email");
+                                User user = new User(id, pass, 1, "email");
                                 intent.putExtra("user", user);
                                 startActivity(intent);
                             } else {
