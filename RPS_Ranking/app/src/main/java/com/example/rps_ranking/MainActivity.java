@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final int IMG_ROCK = R.drawable.rock;
     private final int IMG_PAPER = R.drawable.paper;
     private final int IMG_SCISSORS = R.drawable.scissors;
+    private final int IMG_READY = R.drawable.ready;
+    private final int IMG_WIN = R.drawable.win;
+    private final int IMG_LOSE = R.drawable.lose;
     private final int CARD_TYPE_SCISSORS = 1;
     private final int CARD_TYPE_ROCK = 2;
     private final int CARD_TYPE_PAPER = 3;
@@ -50,16 +53,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView iv_paper;
     private ImageView iv_rock;
     private ImageView iv_user;
+    private ImageView iv_result;
 
-
-    private Handler countHandler;
     private Handler computerActionHandler;
     private Handler userActionHandler;
-    private boolean isStart;
     private int userCard;
     private int computerCard;
     private int score;
     private int result;
+    private int round;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,53 +79,61 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv_1st_score = (TextView) findViewById(R.id.tv_1st_score);
         tv_1st_score.setText("10");
 
-        iv_start = (ImageView) findViewById(R.id.iv_start);
-        iv_start.setOnClickListener(this);
+        //사용될 이미지 초기화
+        iv_result = (ImageView) findViewById(R.id.iv_win);
+        iv_count = (ImageView) findViewById(R.id.iv_count);
+        iv_computer = (ImageView) findViewById(R.id.iv_computer);
+        iv_user = (ImageView) findViewById(R.id.iv_user);
 
+        iv_start = (ImageView) findViewById(R.id.iv_start);
+        iv_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                iv_start.setImageResource(0);
+                iv_start.setEnabled(false);
+                startGame();
+            }
+        });
     }
 
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
-        int imgResource = 0;
-        int userCardType = 0;
+        // 버튼 잠금 메소드 추가
         switch (view.getId()) {
-            case R.id.iv_start:
-                iv_start.setImageResource(0);
-                isStart = true;
-                showCountDown();
-                return;
             case R.id.iv_scissors:
-                imgResource = IMG_SCISSORS;
-                userCardType = CARD_TYPE_SCISSORS;
+                iv_user.setImageResource(IMG_SCISSORS);
+                userCard = CARD_TYPE_SCISSORS;
                 break;
             case R.id.iv_rock:
-                imgResource = IMG_ROCK;
-                userCardType = CARD_TYPE_ROCK;
+                iv_user.setImageResource(IMG_ROCK);
+                userCard = CARD_TYPE_ROCK;
                 break;
             case R.id.iv_paper:
-                imgResource = IMG_PAPER;
-                userCardType = CARD_TYPE_PAPER;
+                iv_user.setImageResource(IMG_PAPER);
+                userCard = CARD_TYPE_PAPER;
                 break;
             default:
                 break;
         }
 
-        iv_user = (ImageView) findViewById(R.id.iv_user);
-        iv_user.setImageResource(imgResource);
-        userCard = userCardType;
+        setUserCardTouch(false);
     }
 
-    private void amountScore(int score) {
+    private void setScore(int score) {
         this.score += score;
         String result = Integer.toString(this.score);
         tv_score.setText(result);
     }
 
+    private void clearScore() {
+        this.score = 0;
+        tv_score.setText("0");
+    }
 
-    private void sleepStart() {
+    private void timeSleep(int time) {
         try {
-            sleep(1000);
+            sleep(time);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -133,44 +143,82 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userActionHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
-                if (userCard == 0 || computerCard == 0) {
-                    finish();
+                setUserCardTouch(false);
+                if (userCard == 0) {
+                    setLoseCase();
                 }
 
-                int match = userCard - computerCard;
+                int matchResult = userCard - computerCard;
 
-                if (match == -2 || match == 1) {
+                if (matchResult == -2 || matchResult == 1) {
                     result = WIN_POINT;
-                } else if (match == -1 || match == 2) {
+                } else if (matchResult == -1 || matchResult == 2) {
                     result = LOSE_POINT;
                 } else {
                     result = DRAW_POINT;
                 }
 
                 if (result == LOSE_POINT) {
-                    finish();
+                    setLoseCase();
+                } else {
+                    setWinCase();
                 }
 
-                amountScore(result);
-                result = 0;
             }
         };
 
-        class TimeSleep implements Runnable {
+        class WinRun implements Runnable {
             @Override
             public void run() {
-                try {
-                    sleep(1000);
-                    userActionHandler.sendEmptyMessage(0);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                timeSleep(1000);
+                userActionHandler.sendEmptyMessage(0);
             }
         }
 
-        TimeSleep timeSleep = new TimeSleep();
-        Thread thread = new Thread(timeSleep);
+        WinRun winRun = new WinRun();
+        Thread thread = new Thread(winRun);
         thread.start();
+    }
+
+    private void setWinCase() {
+        this.round++;
+        setScore(result);
+        iv_result.setImageResource(IMG_WIN);
+
+        onStop();
+
+        iv_result.setEnabled(true);
+        iv_result.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setScreen();
+                startGame();
+            }
+        });
+    }
+
+    private void setLoseCase() {
+        iv_result.setImageResource(IMG_LOSE);
+
+        onStop();
+
+        iv_result.setEnabled(true);
+        iv_result.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clearScore();
+                setScreen();
+                startGame();
+            }
+        });
+    }
+
+    private void setScreen() {
+        userCard = 0;
+        iv_computer.setImageResource(IMG_READY);
+        iv_user.setImageResource(IMG_READY);
+        iv_result.setImageResource(0);
+        iv_result.setEnabled(false);
     }
 
     private void createUserCard() {
@@ -183,64 +231,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         iv_scissors.setOnClickListener(this);
     }
 
+    private void setUserCardTouch(boolean bool) {
+        iv_scissors.setEnabled(bool);
+        iv_rock.setEnabled(bool);
+        iv_paper.setEnabled(bool);
+    }
+
     private void showComputerAction() {
         computerActionHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 Random random = new Random();
                 int randomNum = random.nextInt(3) + 1;
-                int imgResource = 0;
 
                 switch (randomNum) {
                     case 1:
-                        imgResource = IMG_SCISSORS;
+                        iv_computer.setImageResource(IMG_SCISSORS);
                         computerCard = CARD_TYPE_SCISSORS;
                         break;
                     case 2:
-                        imgResource = IMG_ROCK;
+                        iv_computer.setImageResource(IMG_ROCK);
                         computerCard = CARD_TYPE_ROCK;
                         break;
                     case 3:
-                        imgResource = IMG_PAPER;
+                        iv_computer.setImageResource(IMG_PAPER);
                         computerCard = CARD_TYPE_PAPER;
                         break;
                     default:
                         break;
                 }
-                iv_computer = (ImageView) findViewById(R.id.iv_computer);
-                iv_computer.setImageResource(imgResource);
 
                 createUserCard();
-
-                selectWinner(); //정해진 시간안에 패를 고르지않으면 패배 하는 메서드
+                setUserCardTouch(true);
+                selectWinner();
             }
         };
     }
 
-    private void showCountDown() {
-        countHandler = new Handler(Looper.getMainLooper()) {
+    private void startGame() {
+        Handler countHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
-                int imgResource = 0;
-
                 switch (msg.arg1) {
                     case 0:
-                        imgResource = 0;
+                        iv_count.setImageResource(0);
                         break;
                     case 1:
-                        imgResource = IMG_ONE;
+                        iv_count.setImageResource(IMG_ONE);
                         break;
                     case 2:
-                        imgResource = IMG_TWO;
+                        iv_count.setImageResource(IMG_TWO);
                         break;
                     case 3:
-                        imgResource = IMG_THREE;
+                        iv_count.setImageResource(IMG_THREE);
                         break;
                     default:
                         break;
                 }
-                iv_count = (ImageView) findViewById(R.id.iv_count);
-                iv_count.setImageResource(imgResource);
             }
         };
 
@@ -254,11 +301,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     message.arg1 = i;
                     countHandler.sendMessage(message);
 
-                    try {
-                        sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    timeSleep(1000);
 
                     if (i == 1) { // 컴퓨터가 선택하는 시점
                         showComputerAction();
@@ -269,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         CountDownThread countDownThread = new CountDownThread();
-        Thread countThread = new Thread(countDownThread);
-        countThread.start();
+        Thread thread = new Thread(countDownThread);
+        thread.start();
     }
 }
