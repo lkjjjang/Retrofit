@@ -29,9 +29,6 @@ public class RegisterActivity extends AppCompatActivity {
     private final String RESPONSE_CODE = "success";
     private final String EMPTY = "";
 
-    private String userID;
-    private String userPassword;
-    private String userEmail;
     private AlertDialog dialog;
     private boolean validate = false;
 
@@ -155,12 +152,24 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean checkEmail(String email) {
         char[] chars = email.toCharArray();
 
+        if (chars.length < 6) {
+            return false;
+        }
+
+        boolean isPoint = false;
+        boolean isAt = false;
+
         for(char ch : chars) {
             if (ch == '@') {
-                return true;
+                isAt = true;
+            }
+
+            if (ch == '.') {
+                isPoint = true;
             }
         }
-        return false;
+
+        return isPoint && isAt;
     }
 
     private void dialogPrint(AlertDialog.Builder builder, String msg) {

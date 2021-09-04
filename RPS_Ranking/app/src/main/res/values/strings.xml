@@ -9,4 +9,14 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="rankList">명예의 전당</string>
+    <string name="rankerId">아이디</string>
+    <string name="user">님</string>
+    <string name="score">점수</string>
+    <string name="point">점</string>
+    <string name="bestScore">최고 점수 :</string>
+    <string name="left">left</string>
+    <string name="space">  </string>
+    <string name="nowScore">현재 점수 :</string>
+    <string name="zeroPoint">0</string>
 </resources>

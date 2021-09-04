@@ -8,6 +8,7 @@
     tools:context=".MainActivity">
 
     <LinearLayout
+        android:layout_margin="10dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -20,108 +21,160 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="30sp"
-                android:text="명예의 전당"/>
+                android:textSize="50sp"
+                android:text="@string/rankList"/>
 
         </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/first">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/first"/>
+
+            <TextView
+                android:id="@+id/tv_1st_id"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="@string/rankerId"
+                android:textSize="20sp"
+                tools:ignore="RtlHardcoded" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text=" "
                 android:textSize="30sp"
-                android:text="1위 : "/>
-
-            <TextView
-                android:id="@+id/tv_1st"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="30sp"
-                android:text="1위아이디"/>
+                tools:ignore="HardcodedText" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="30sp"
-                android:text=" "/>
+                android:text="@string/user"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/tv_1st_score"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:textSize="20sp"
+                android:text="@string/score"
+                tools:ignore="RtlHardcoded" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="@string/point"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/second">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/second"/>
+
+            <TextView
+                android:id="@+id/tv_2nd_id"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:gravity="right"
+                android:text="@string/rankerId"
+                tools:ignore="RtlHardcoded" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" "
                 android:textSize="30sp"
-                android:text="점수"/>
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_2nd_score"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="@string/score"
+                android:textSize="20sp"
+                tools:ignore="RtlHardcoded" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+
+                android:text="@string/point"/>
 
         </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/third">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/third"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_3rd_id"
+                android:layout_width="180dp"
                 android:layout_height="wrap_content"
-                android:textSize="25sp"
-                android:text="2위 : "/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="25sp"
-                android:text="2위아이디 "/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="25sp"
-                android:text="점수"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:gravity="right"
                 android:textSize="20sp"
-                android:text="3위 : "/>
+                android:text="@string/rankerId"
+                tools:ignore="RtlHardcoded" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text=" "
+                android:textSize="30sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_3rd_score"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="@string/score"
                 android:textSize="20sp"
-                android:text="3위아이디 "/>
+                tools:ignore="RtlHardcoded" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textSize="20sp"
-                android:text="점수"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="나의 최고 점수 : "/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="점수"/>
+                android:text="@string/point"/>
 
         </LinearLayout>
 
@@ -129,30 +182,102 @@
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_gravity="left"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="RtlHardcoded">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:text="score : "/>
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_score"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:text="0"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="30sp"
+                    android:text="@string/bestScore"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" "
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/tv_player_bestScore"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity=""
+                    android:textSize="30sp"
+                    android:text="@string/score"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/nowScore"
+                        android:textSize="30sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" "
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/tv_player_score"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textSize="30sp"
+                    android:text="@string/zeroPoint"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp">
+
+            <Button
+                android:id="@+id/bt_menu"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="15sp"
+                android:text="게임\n방법"/>
+
+        </LinearLayout>
 
     </LinearLayout>
-
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_margin="10dp"
+        android:layout_weight="2">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -169,6 +294,7 @@
                     android:id="@+id/iv_computer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/border"
                     android:src="@drawable/ready"/>
 
             </LinearLayout>
@@ -183,6 +309,7 @@
                     android:id="@+id/iv_user"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/border"
                     android:src="@drawable/ready"/>
 
             </LinearLayout>
@@ -203,7 +330,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_start"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -233,13 +359,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2"
+        android:layout_margin="10dp"
+        android:layout_weight="3"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/iv_scissors"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/border"
             android:layout_weight="1"
             android:src="@drawable/scissors" />
 
@@ -247,6 +375,7 @@
             android:id="@+id/iv_rock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/border"
             android:layout_weight="1"
             android:src="@drawable/rock"/>
 
@@ -254,6 +383,7 @@
             android:id="@+id/iv_paper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/border"
             android:layout_weight="1"
             android:src="@drawable/paper"/>
 

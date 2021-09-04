@@ -18,6 +18,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText et_id;
@@ -26,6 +28,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tv_register;
     private AlertDialog dialog;
     private boolean isLogin = false;
+
+    private User player;
 
     private final String RESPONSE_CODE = "success";
     private final String MSG_EMPTY_CHECK = "아이디와 비밀번호를 확인 해주세요";
@@ -62,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     isLogin = true;
                 }
-
+                
                 Response.Listener<String> listener = new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -76,13 +80,13 @@ public class LoginActivity extends AppCompatActivity {
 
                             if (success) {
                                 String id = jsonObject.getString("userId");
-                                String pass = jsonObject.getString("userPassword");
+                                int bestScore = Integer.parseInt(jsonObject.getString("score"));
+
+                                player = new User(id, bestScore);
 
                                 Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                User user = new User(id, pass, 1, "email");
-                                intent.putExtra("user", user);
-                                startActivity(intent);
+
+                                rankRequest();
                             } else {
                                 dialogPrint(builder, MSG_EMPTY_CHECK);
                                 return;
@@ -98,6 +102,44 @@ public class LoginActivity extends AppCompatActivity {
                 queue.add(loginRequest);
             }
         });
+    }
+
+    private void rankRequest() {
+        Response.Listener<String> rankListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    ArrayList<User> rankers = new ArrayList<>();
+
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("result");
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject rank = jsonArray.getJSONObject(i);
+
+                        String id = rank.get("id").toString();
+                        int score = Integer.parseInt(rank.get("score").toString());
+
+                        User ranker = new User(id, score);
+                        rankers.add(ranker);
+                    }
+
+                    GameData gameData = new GameData(player, rankers.get(0), rankers.get(1), rankers.get(2));
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("user", gameData);
+
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        RankRequest rankRequest = new RankRequest(rankListener);
+        RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
+        queue.add(rankRequest);
     }
 
     private void dialogPrint(AlertDialog.Builder builder, String msg) {
