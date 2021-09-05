@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,9 +35,11 @@ import kotlin.jvm.internal.PropertyReference0Impl;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private final int STANDARD_TIME = 1000;
-    private final int GAME_LEVEL_SET = 100;
-    private final int COUNT_DOWN = 3;
+    public final static int STANDARD_TIME = 1000;
+    public final static int GAME_LEVEL_SET = 10;
+    public final static int COUNT_DOWN = 3;
+    public static int round;
+
     private final int IMG_ONE = R.drawable.one;
     private final int IMG_TWO = R.drawable.two;
     private final int IMG_THREE = R.drawable.three;
@@ -81,9 +84,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int computerCard;
     private int score;
     private int result;
-    private int round;
     private long backKeyPressedTime = 0;
     private Toast toast;
+    private ProgressBar progressBar;
 
 
     @Override
@@ -102,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         iv_computer = (ImageView) findViewById(R.id.iv_computer);
         iv_user = (ImageView) findViewById(R.id.iv_user);
         iv_start = (ImageView) findViewById(R.id.iv_start);
+        progressBar = (ProgressBar) findViewById(R.id.progressbar);
 
         iv_start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,17 +179,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
 
-        class WinRun implements Runnable {
-            @Override
-            public void run() {
-                timeSleep(STANDARD_TIME - round * GAME_LEVEL_SET);
-                handler.sendEmptyMessage(0);
-            }
-        }
-
-        WinRun winRun = new WinRun();
-        Thread thread = new Thread(winRun);
-        thread.start();
+        MatchThread matchThread = new MatchThread(handler);
+        matchThread.start();
     }
 
     private void updateScore() {
@@ -217,36 +212,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         queue.add(scoreUpdateRequest);
     }
 
-    Handler computerActionHandler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            Random random = new Random();
-            int randomNum = random.nextInt(3) + 1;
-
-            switch (randomNum) {
-                case 1:
-                    iv_computer.setImageResource(IMG_SCISSORS);
-                    computerCard = CARD_TYPE_SCISSORS;
-                    break;
-                case 2:
-                    iv_computer.setImageResource(IMG_ROCK);
-                    computerCard = CARD_TYPE_ROCK;
-                    break;
-                case 3:
-                    iv_computer.setImageResource(IMG_PAPER);
-                    computerCard = CARD_TYPE_PAPER;
-                    break;
-                default:
-                    break;
-            }
-
-            createUserCard();
-            setUserCardTouch(true);
-            selectWinner();
-        }
-    };
-
     private void startGame() {
+        Handler computerActionHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                Random random = new Random();
+                int randomNum = random.nextInt(3) + 1;
+
+                switch (randomNum) {
+                    case 1:
+                        iv_computer.setImageResource(IMG_SCISSORS);
+                        computerCard = CARD_TYPE_SCISSORS;
+                        break;
+                    case 2:
+                        iv_computer.setImageResource(IMG_ROCK);
+                        computerCard = CARD_TYPE_ROCK;
+                        break;
+                    case 3:
+                        iv_computer.setImageResource(IMG_PAPER);
+                        computerCard = CARD_TYPE_PAPER;
+                        break;
+                    default:
+                        break;
+                }
+
+                createUserCard();
+                setProgressBar();
+                setUserCardTouch(true);
+                selectWinner();
+            }
+        };
+
         Handler countHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
@@ -269,34 +265,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
 
-        class CountDownThread implements Runnable {
+        CountDownThread countDownThread = new CountDownThread(countHandler, computerActionHandler);
+        countDownThread.start();
+    }
+
+    private void setProgressBar() {
+        Handler progressHandler = new Handler(Looper.getMainLooper()) {
             @Override
-            public void run() {
-                // 반복문이 종료 되는 시점에서 카운트 이미지 지움
-                for (int i = COUNT_DOWN; i >= 0; i--) {
-                    Message message = new Message();
-                    message.what = 0;
-                    message.arg1 = i;
-                    countHandler.sendMessage(message);
-
-                    timeSleep(STANDARD_TIME - round * GAME_LEVEL_SET);
-
-                    if (i == 1) { // 컴퓨터가 선택하는 시점
-                        computerActionHandler.sendEmptyMessage(0);
-                    }
-                }
+            public void handleMessage(@NonNull Message msg) {
+                int millSecond = msg.arg1;
+                progressBar.setProgress(millSecond);
             }
-        }
+        };
 
-        CountDownThread countDownThread = new CountDownThread();
-        Thread thread = new Thread(countDownThread);
-        thread.start();
+        ProgressThread progressThread = new ProgressThread(progressHandler);
+        progressThread.start();
     }
 
     private void setWinCase() {
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(this.VIBRATOR_TIME);
-        this.round++;
+
+        round++;
         setScore(result);
         iv_result.setImageResource(IMG_WIN);
 
@@ -318,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         updateScore();
 
-        this.round = 0;
+        round = 0;
         iv_result.setImageResource(IMG_LOSE);
 
         onStop();
