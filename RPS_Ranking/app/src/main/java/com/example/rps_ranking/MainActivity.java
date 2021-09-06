@@ -223,8 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     default:
                         break;
                 }
-
-                progressBar.setProgress(0);
+                
                 createUserCard();        // 유저카드 생성
                 setUserCardTouch(true);  // 유저카드 활성화
                 startProgressBar();      // 프로그래스바 종료 되면 selectWinner() 호출
@@ -296,6 +295,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         iv_matchResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressBar.setProgress(0);
                 setScreen();
                 startGame();
             }
@@ -317,6 +317,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         iv_matchResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressBar.setProgress(0);
                 clearScore();
                 setScreen();
                 startGame();
@@ -412,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onBackPressed() {
         if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
             backKeyPressedTime = System.currentTimeMillis();
-            toast = Toast.makeText(this, "뒤로가기 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT);
+            toast = Toast.makeText(this, "뒤로 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT);
             toast.show();
             return;
         }
