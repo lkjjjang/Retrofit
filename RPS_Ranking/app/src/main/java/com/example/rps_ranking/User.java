@@ -20,4 +20,25 @@ public class User implements Serializable {
     public int getBestScore() {
         return this.bestScore;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (obj == null
+                || !(obj instanceof User)
+                || this.hashCode() != obj.hashCode()) {
+            return false;
+        }
+
+        User other = (User) obj;
+        return this.id.equals(other.id) && this.bestScore == other.bestScore;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode() ^ (this.bestScore << 16);
+    }
 }

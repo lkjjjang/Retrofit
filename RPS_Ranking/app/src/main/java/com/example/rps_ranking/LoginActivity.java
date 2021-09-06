@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText et_password;
     private Button bt_login;
     private TextView tv_register;
+    private TextView tv_withdrawal;
     private AlertDialog dialog;
     private boolean isLogin = false;
 
@@ -39,6 +40,17 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //회원탈퇴
+        tv_withdrawal = (TextView) findViewById(R.id.tv_withdrawal);
+        tv_withdrawal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, UserRemoveActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        //회원가입
         tv_register = (TextView) findViewById(R.id.tv_register);
         tv_register.setOnClickListener(new View.OnClickListener() {
             @Override

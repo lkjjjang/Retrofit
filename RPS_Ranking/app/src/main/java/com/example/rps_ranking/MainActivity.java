@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final String ZERO_POINT = "0";
     private final String RESPONSE_CODE = "success";
     private final int VIBRATOR_TIME = 200;
+    private final int TIMEOUT = 100;
 
     private ImageView iv_count;
     private ImageView iv_computer;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView iv_paper;
     private ImageView iv_rock;
     private ImageView iv_user;
-    private ImageView iv_result;
+    private ImageView iv_matchResult;
 
     private TextView tv_1st_id;
     private TextView tv_1st_score;
@@ -83,11 +84,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int userCard;
     private int computerCard;
     private int score;
-    private int result;
+    //private int result;
     private long backKeyPressedTime = 0;
     private Toast toast;
     private ProgressBar progressBar;
+    private ProgressThread progressThread;
 
+    private boolean hasUserCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rankScorePrint();
 
         //사용될 뷰 초기화
-        iv_result = (ImageView) findViewById(R.id.iv_win);
+        iv_matchResult = (ImageView) findViewById(R.id.iv_matchResult);
         iv_count = (ImageView) findViewById(R.id.iv_count);
         iv_computer = (ImageView) findViewById(R.id.iv_computer);
         iv_user = (ImageView) findViewById(R.id.iv_user);
@@ -147,40 +150,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
 
+        this.hasUserCard = true;
         setUserCardTouch(false);
     }
 
     private void selectWinner() {
-        Handler handler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(@NonNull Message msg) {
-                setUserCardTouch(false);
+        this.hasUserCard = false;
 
-                if (userCard == 0) {
-                    setLoseCase();
-                    return;
-                }
+        if (userCard == 0) {
+            setLoseCase();
+            return;
+        }
 
-                int matchResult = userCard - computerCard;
+        int matchResult = userCard - computerCard;
 
-                if (matchResult == -2 || matchResult == 1) {
-                    result = WIN_POINT;
-                } else if (matchResult == -1 || matchResult == 2) {
-                    result = LOSE_POINT;
-                } else {
-                    result = DRAW_POINT;
-                }
-
-                if (result == LOSE_POINT) {
-                    setLoseCase();
-                } else {
-                    setWinCase();
-                }
-            }
-        };
-
-        MatchThread matchThread = new MatchThread(handler);
-        matchThread.start();
+        if (matchResult == -2 || matchResult == 1) {
+            score += WIN_POINT;
+            setWinCase();
+        } else if (matchResult == -1 || matchResult == 2) {
+            setLoseCase();
+        } else {
+            score += DRAW_POINT;
+            setWinCase();
+        }
     }
 
     private void updateScore() {
@@ -194,10 +186,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     boolean success = jsonObject.getBoolean(RESPONSE_CODE);
-
-                    if (!success) {
-                        updateScore();
-                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -236,10 +224,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         break;
                 }
 
-                createUserCard();
-                setProgressBar();
-                setUserCardTouch(true);
-                selectWinner();
+                progressBar.setProgress(0);
+                createUserCard();        // 유저카드 생성
+                setUserCardTouch(true);  // 유저카드 활성화
+                startProgressBar();      // 프로그래스바 종료 되면 selectWinner() 호출
             }
         };
 
@@ -269,16 +257,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         countDownThread.start();
     }
 
-    private void setProgressBar() {
+    private void startProgressBar() {
         Handler progressHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
+                // 제한시간내 유저 카드 선택 시 progressBar 정지 승자판별
+                if (hasUserCard) {
+                    UserCardSelectCallback callback = (UserCardSelectCallback) progressThread;
+                    callback.onUserCardSelect(true);
+                    selectWinner();
+                }
+
                 int millSecond = msg.arg1;
                 progressBar.setProgress(millSecond);
+
+                if (millSecond == TIMEOUT) {
+                    setUserCardTouch(false);
+                    selectWinner();
+                }
             }
         };
 
-        ProgressThread progressThread = new ProgressThread(progressHandler);
+        progressThread = new ProgressThread(progressHandler);
         progressThread.start();
     }
 
@@ -287,13 +287,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         vibrator.vibrate(this.VIBRATOR_TIME);
 
         round++;
-        setScore(result);
-        iv_result.setImageResource(IMG_WIN);
+        scorePrint();
+        iv_matchResult.setImageResource(IMG_WIN);
 
         onStop();
 
-        iv_result.setEnabled(true);
-        iv_result.setOnClickListener(new View.OnClickListener() {
+        iv_matchResult.setEnabled(true);
+        iv_matchResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setScreen();
@@ -309,12 +309,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateScore();
 
         round = 0;
-        iv_result.setImageResource(IMG_LOSE);
+        iv_matchResult.setImageResource(IMG_LOSE);
 
         onStop();
 
-        iv_result.setEnabled(true);
-        iv_result.setOnClickListener(new View.OnClickListener() {
+        iv_matchResult.setEnabled(true);
+        iv_matchResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 clearScore();
@@ -324,10 +324,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void setScore(int score) {
-        this.score += score;
+    private void scorePrint() {
         String result = Integer.toString(this.score);
         tv_player_score.setText(result);
+
+        if (this.score > gameData.getPlayer().getBestScore()) {
+            tv_player_bestScore.setText(result);
+        }
     }
 
     private void clearScore() {
@@ -355,8 +358,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userCard = 0;
         iv_computer.setImageResource(IMG_READY);
         iv_user.setImageResource(IMG_READY);
-        iv_result.setImageResource(0);
-        iv_result.setEnabled(false);
+        iv_matchResult.setImageResource(0);
+        iv_matchResult.setEnabled(false);
     }
 
     private void createUserCard() {

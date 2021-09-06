@@ -282,8 +282,9 @@
         <ProgressBar
             android:id="@+id/progressbar"
             style="@android:style/Widget.ProgressBar.Horizontal"
+            android:progressDrawable="@drawable/progressbar_style"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="10dp"
             android:progress="0"
             android:max="100"/>
 
@@ -294,7 +295,7 @@
         android:layout_height="match_parent"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_weight="2">
+        android:layout_weight="3">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -364,7 +365,7 @@
             android:layout_gravity="center">
 
             <ImageView
-                android:id="@+id/iv_win"
+                android:id="@+id/iv_matchResult"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
@@ -376,7 +377,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="10dp"
-        android:layout_weight="3"
+        android:layout_weight="4"
         android:orientation="horizontal">
 
         <ImageView

@@ -7,18 +7,21 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_title"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_title"
         android:supportsRtl="true"
         android:theme="@style/Theme.RPS_Ranking"
         android:usesCleartextTraffic="true">
 
         <activity
+            android:name=".UserRemoveActivity"
+            android:exported="true" />
+        <activity
             android:name=".How"
             android:exported="true"
-            android:theme="@style/popupTheme"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/popupTheme" />
         <activity
             android:name=".RegisterActivity"
             android:exported="true" />
